@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationsRepository } from './reservations.repository';
-import { log } from 'console';
 
 @Injectable()
 export class ReservationsService {
@@ -11,7 +10,6 @@ export class ReservationsService {
   ) {}
 
   create(createReservationDto: CreateReservationDto) {
-    log('createReservationDto', createReservationDto);
     return this.reservationsRepository.create({
       ...createReservationDto,
       timestamp: new Date(),

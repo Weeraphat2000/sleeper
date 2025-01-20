@@ -11,8 +11,6 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     const document = new this.model({
       ...data,
       _id: new Types.ObjectId(),
-      // createdAt: new Date(),
-      // updatedAt: new Date(),
     });
     return document.save();
   }
