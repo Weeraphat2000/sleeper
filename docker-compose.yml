@@ -10,8 +10,26 @@ services:
     command: pnpm run start:dev servervations # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev server)
     ports:
       - '3000:3000' # แมปพอร์ต 3000 ภายใน container ออกมาที่พอร์ต 3000 บนเครื่องโฮสต์
+    volumes:
+      - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ reservations
     depends_on:
       - db # ให้ container reservations ขึ้นหลังจาก db ขึ้นแล้ว
+    environment:
+      - MONGODB_URI=mongodb://db:27017/ # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+
+  auth:
+    # ส่วนกำหนดวิธีการ build container สำหรับ service ชื่อ "auth"
+    build:
+      context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
+      dockerfile: ./apps/auth/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/auth
+      target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
+    command: pnpm run start:dev auth # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev auth)
+    ports:
+      - '3001:3001' # แมปพอร์ต 3001 ภายใน container ออกมาที่พอร์ต 3001 บนเครื่องโฮสต์
+    volumes:
+      - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ auth
+    depends_on:
+      - db # ให้ container auth ขึ้นหลังจาก db ขึ้นแล้ว
     environment:
       - MONGODB_URI=mongodb://db:27017/ # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
 
