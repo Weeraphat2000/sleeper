@@ -2,8 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { ReservationsModule } from './reservations.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
+import { log } from 'console';
 
 async function bootstrap() {
+  log('test');
+
   const app = await NestFactory.create(ReservationsModule);
 
   app.useGlobalPipes(

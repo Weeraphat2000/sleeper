@@ -1,0 +1,27 @@
+version: '3.8' # ระบุเวอร์ชันของ docker-compose (อาจเป็น 3 หรือ 3.8 เป็นต้น)
+
+services:
+  reservations:
+    # ส่วนกำหนดวิธีการ build container สำหรับ service ชื่อ "reservations"
+    build:
+      context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
+      dockerfile: ./apps/reservations/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/reservations
+      target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
+    command: pnpm run start:dev servervations # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev server)
+    ports:
+      - '3000:3000' # แมปพอร์ต 3000 ภายใน container ออกมาที่พอร์ต 3000 บนเครื่องโฮสต์
+    depends_on:
+      - db # ให้ container reservations ขึ้นหลังจาก db ขึ้นแล้ว
+    environment:
+      - MONGODB_URI=mongodb://db:27017/ # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+
+  db:
+    # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub
+    image: mongo
+    ports:
+      - '27019:27017' # แมปพอร์ต 27017 ภายใน container (MongoDB ปกติ) ออกมาที่พอร์ต 27019 บนเครื่องโฮสต์
+    volumes: # กำหนด volume สำหรับเก็บข้อมูลฐานข้อมูล
+      - db:/data/db # อ้างอิง volume ชื่อ db ที่กำหนดไว้ใน global
+
+volumes:
+  db: # กำหนด volume ชื่อ db สำหรับใช้งาน
