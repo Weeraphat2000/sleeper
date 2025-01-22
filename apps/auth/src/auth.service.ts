@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { log } from 'console';
+import { ToekenPayload } from './interfaces/token-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -19,13 +20,13 @@ export class AuthService {
   async login(user: UserDocument, res: Response) {
     log('AuthService.login', user);
 
-    const payload = {
+    const payload: ToekenPayload = {
       userId: user._id.toHexString(),
     };
 
     const expires = new Date();
     expires.setDate(expires.getDate() + 7);
     const token = this.jwtService.sign(payload);
-    res.cookie('token', token, { httpOnly: true, expires });
+    res.cookie('Authentication', token, { httpOnly: true, expires });
   }
 }

@@ -4,6 +4,13 @@ import { Strategy } from 'passport-local';
 import { UsersService } from '../users/users.service';
 import { log } from 'console';
 
+// Local Strategy (LocalStrategy) โดยปกติถูกใช้เพื่อ รับข้อมูล username/password (หรือ email/password) จาก request เพื่อทำการ login (ตรวจสอบ username/password) แบบง่าย ๆ บนเซิร์ฟเวอร์โดยตรง
+// JWT Strategy (JwtStrategy) มักใช้หลังจากที่ผู้ใช้ login สำเร็จและได้รับ JWT เพื่อยืนยันตัวตนใน request ถัด ๆ ไป โดยจะตรวจสอบ token (JWT) ว่า valid หรือไม่ และดึงข้อมูลผู้ใช้ (payload) มาใช้งาน
+// โดยสรุป
+
+// LocalStrategy: ใช้สำหรับ login (ตรวจสอบ username/password) ครั้งแรก
+// JwtStrategy: ใช้ ตรวจสอบ JWT ที่ฝังมาใน request (Header หรือ Cookie) เวลาเรียกใช้งาน API หลังจาก login สำเร็จแล้วครับ!
+
 @Injectable()
 // สร้าง LocalStrategy โดยใช้ PassportStrategy และกำหนด strategy เป็น 'localna' (ถ้าไม่ใส่อะไร default 'local')
 export class LocalStrategy extends PassportStrategy(Strategy, 'localna') {

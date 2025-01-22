@@ -5,11 +5,13 @@ import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { log } from 'console';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
 
   app.enableCors(); // ทำให้สามารถเรียกใช้งาน API จาก domain อื่นได้
+  app.use(cookieParser()); // ใช้ cookie parser ในการอ่านค่าจาก cookie ที่ส่งมา
 
   app.useGlobalPipes(
     new ValidationPipe({
