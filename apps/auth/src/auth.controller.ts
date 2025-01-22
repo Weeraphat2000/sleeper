@@ -6,6 +6,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
 import { Request, Response } from 'express';
 import { UserDocument } from './users/models/user.schema';
+import { ApiBody } from '@nestjs/swagger';
 // import { ApiTags } from '@nestjs/swagger';
 
 // @ApiTags('') // จัดกลุ่ม (tag) ใน Swagger
@@ -23,6 +24,21 @@ export class AuthController {
   }
 
   @UseGuards(LocalAuthGuard)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'hun@gmail.com',
+        },
+        password: {
+          type: 'string',
+          example: 'Pass123&',
+        },
+      },
+    },
+  })
   @Post('login')
   async login(
     @CurrentUser() user: UserDocument,
