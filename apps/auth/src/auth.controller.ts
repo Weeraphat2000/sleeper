@@ -2,7 +2,9 @@ import { Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { log } from 'console';
+// import { ApiTags } from '@nestjs/swagger';
 
+// @ApiTags('') // จัดกลุ่ม (tag) ใน Swagger
 @Controller()
 export class AuthController {
   constructor(
