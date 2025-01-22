@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { log } from 'console';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser } from './current-user.decorator';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { UserDocument } from './users/models/user.schema';
 // import { ApiTags } from '@nestjs/swagger';
 
@@ -27,8 +27,10 @@ export class AuthController {
   async login(
     @CurrentUser() user: UserDocument,
     @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
   ) {
     log('AuthController.login', user);
+    log('reqUser', req.user);
     await this.authService.login(user, res);
     res.send(user);
 
