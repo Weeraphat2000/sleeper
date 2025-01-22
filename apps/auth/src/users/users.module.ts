@@ -16,6 +16,7 @@ import { UsersRepository } from './users.repository';
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
+  // export ให้ UsersService และ UsersRepository ใช้งานได้จากภายนอก
   exports: [UsersService, UsersRepository],
 })
 export class UsersModule {}
