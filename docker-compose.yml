@@ -14,8 +14,10 @@ services:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ reservations
     depends_on:
       - db # ให้ container reservations ขึ้นหลังจาก db ขึ้นแล้ว
-    environment:
-      - MONGODB_URI=mongodb://db:27017/ # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+    # environment:
+    #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+    env_file:
+      - ./apps/reservations/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/reservations คือ จะดึงค่าในไฟล์ .env(./apps/reservations/.env) มาใช้เป็น environment
 
   auth:
     # ส่วนกำหนดวิธีการ build container สำหรับ service ชื่อ "auth"
@@ -30,8 +32,12 @@ services:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ auth
     depends_on:
       - db # ให้ container auth ขึ้นหลังจาก db ขึ้นแล้ว
-    environment:
-      - MONGODB_URI=mongodb://db:27017/ # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+    # environment:
+    #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+    #   - JWT_SECRET=secret # ตัวแปร environment สำหรับเก็บค่า JWT_SECRET
+    #   - JWT_EXPIRATION=1d # ตัวแปร environment สำหรับเก็บค่า JWT_EXPIRATION
+    env_file:
+      - ./apps/auth/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/auth คือ จะดึงค่าในไฟล์ .env(./apps/auth/.env) มาใช้เป็น environment
 
   db:
     # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub
