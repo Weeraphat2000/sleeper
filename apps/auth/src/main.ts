@@ -6,9 +6,19 @@ import { ConfigService } from '@nestjs/config';
 import { log } from 'console';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
+  const configService = app.get(ConfigService);
+
+  app.connectMicroservice({
+    transport: Transport.TCP,
+    options: {
+      host: '0.0.0.0',
+      port: configService.get('TCP_PORT'),
+    },
+  });
 
   app.enableCors(); // ทำให้สามารถเรียกใช้งาน API จาก domain อื่นได้
   app.use(cookieParser()); // ใช้ cookie parser ในการอ่านค่าจาก cookie ที่ส่งมา
@@ -42,9 +52,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT');
+  const port = configService.get<number>('HTTP_PORT');
   log(`PORT: ${port}`);
+
+  await app.startAllMicroservices();
   await app.listen(port);
   // await app.listen(process.env.port ?? 3001);
 }

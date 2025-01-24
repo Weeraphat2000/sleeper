@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '../users/users.service';
-import { Request } from 'express';
+// import { Request } from 'express';
 import { ToekenPayload } from '../interfaces/token-payload.interface';
 import { log } from 'console';
 
@@ -18,13 +18,14 @@ import { log } from 'console';
 // สร้าง JwtStrategy โดยใช้ PassportStrategy และกำหนด strategy เป็น 'jwtnaa' (ถ้าไม่ใส่อะไร default 'jwt')
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwtnaa') {
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly userService: UsersService,
   ) {
     super({
       // jwtFromRequest จะดึง token จาก request ที่ส่งมา โดยในที่นี้จะดึงจาก request ที่ส่งมาใน cookie ที่ชื่อว่า Authentication
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => request?.cookies?.Authentication,
+        (request: any) =>
+          request?.cookies?.Authentication || request?.Authentication, // request?.Authentication จาก TCP
       ]),
 
       // ExtractJwt.fromAuthHeaderAsBearerToken() จะดึง token จาก Authorization header และตัด Bearer ออก
@@ -40,10 +41,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwtnaa') {
     log('JwtStrategy.validate', payload);
 
     // จะ return user ออกไปให้ Passport ใช้งานต่อ
-    // คือ จะสร้าง key user ใน request (request.user) ให้ Passport ใช้งานต่อ
+    // passport จะสร้าง key user ใน request (request.user) ให้ Passport ใช้งานต่อ
     const user = await this.userService.getUser({ _id: payload.userId });
+    log('useruseruser', user);
     delete user.password;
-    return user;
+    return {
+      ...user,
+      message: 'return ตรงนี้จะสร้าง key user เพื่อส่งไป controller ต่อไป',
+    };
   }
 }
 

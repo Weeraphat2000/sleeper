@@ -3,9 +3,9 @@ import { CreateUserDTO } from './dto/create-user.dto';
 
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../current-user.decorator';
 import { UserDocument } from './models/user.schema';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CurrentUser } from '@app/common';
 
 @ApiTags('users')
 @Controller('users')

@@ -19,8 +19,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         MONGODB_URI: Joi.string().required(), // configModule จะต้องมี MONGODB_URI
         JWT_SECRET: Joi.string().required(), // configModule จะต้องมี JWT_SECRET
         JWT_EXPIRATION: Joi.string().required(), // configModule จะต้องมี JWT_EXPIRATION
-        PORT: Joi.number().required(), // configModule จะต้องมี PORT
-        // PORT: Joi.number().default(3001), // configModule จะมี PORT และ default ค่าเป็น 3001
+        HTTP_PORT: Joi.number().required(), // configModule จะต้องมี PORT
+        // HTTP_PORT: Joi.number().default(3001), // configModule จะมี PORT และ default ค่าเป็น 3001
+        TCP_PORT: Joi.number().required(), // configModule จะต้องมี TCP_PORT
       }),
     }),
     JwtModule.registerAsync({

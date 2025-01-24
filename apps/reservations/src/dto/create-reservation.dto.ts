@@ -23,15 +23,15 @@ export class CreateReservationDto {
   @Type(() => Date)
   endDate: Date;
 
-  @ApiProperty({
-    title: 'userId',
-    description: 'The userId of the Reservation',
-    example: '1',
-    type: String,
-  })
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
+  // @ApiProperty({
+  //   title: 'userId',
+  //   description: 'The userId of the Reservation',
+  //   example: '1',
+  //   type: String,
+  // })
+  // @IsString()
+  // @IsNotEmpty()
+  // userId: string;
 
   @ApiProperty({
     title: 'placeId',
