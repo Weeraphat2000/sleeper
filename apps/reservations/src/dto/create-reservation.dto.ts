@@ -1,6 +1,12 @@
+import { CreateChargeDto } from '@app/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsDefined,
+  IsNotEmptyObject,
+  ValidateNested,
+} from 'class-validator';
 
 export class CreateReservationDto {
   @ApiProperty({
@@ -33,23 +39,43 @@ export class CreateReservationDto {
   // @IsNotEmpty()
   // userId: string;
 
-  @ApiProperty({
-    title: 'placeId',
-    description: 'The placeId of the Reservation',
-    example: '1',
-    type: String,
-  })
-  @IsString()
-  @IsNotEmpty()
-  placeId: string;
+  // @ApiProperty({
+  //   title: 'placeId',
+  //   description: 'The placeId of the Reservation',
+  //   example: '1',
+  //   type: String,
+  // })
+  // @IsString()
+  // @IsNotEmpty()
+  // placeId: string;
+
+  // @ApiProperty({
+  //   title: 'inviteId',
+  //   description: 'The inviteId of the Reservation',
+  //   example: '1',
+  //   type: String,
+  // })
+  // @IsString()
+  // @IsNotEmpty()
+  // inviteId: string;
 
   @ApiProperty({
-    title: 'inviteId',
-    description: 'The inviteId of the Reservation',
-    example: '1',
-    type: String,
+    title: 'charge',
+    description: 'The charge of the Reservation',
+    type: CreateChargeDto,
+    example: {
+      card: {
+        number: '4242424242424242',
+        expMonth: 12,
+        expYear: 2023,
+        cvc: '123',
+      },
+      amount: 100,
+    },
   })
-  @IsString()
-  @IsNotEmpty()
-  inviteId: string;
+  @IsDefined()
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => CreateChargeDto)
+  charge: CreateChargeDto;
 }

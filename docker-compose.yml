@@ -7,6 +7,7 @@ services:
       context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
       dockerfile: ./apps/reservations/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/reservations
       target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
+    restart: always # กำหนดให้ container รันอัตโนมัติเมื่อเกิดข้อผิดพลาด
     command: pnpm run start:dev servervations # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev server)
     ports:
       - '3000:3000' # แมปพอร์ต 3000 ภายใน container ออกมาที่พอร์ต 3000 บนเครื่องโฮสต์
@@ -38,6 +39,24 @@ services:
     #   - JWT_EXPIRATION=1d # ตัวแปร environment สำหรับเก็บค่า JWT_EXPIRATION
     env_file:
       - ./apps/auth/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/auth คือ จะดึงค่าในไฟล์ .env(./apps/auth/.env) มาใช้เป็น environment
+
+  payments:
+    # ส่วนกำหนดวิธีการ build container สำหรับ service ชื่อ "payments"
+    build:
+      context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
+      dockerfile: ./apps/payments/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/payments
+      target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
+    command: pnpm run start:dev payments # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev payments)
+    ports:
+      - '3003:3003' # แมปพอร์ต 3002 ภายใน container ออกมาที่พอร์ต 3002 บนเครื่องโฮสต์
+    volumes:
+      - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ payments
+    depends_on:
+      - db # ให้ container payments ขึ้นหลังจาก db ขึ้นแล้ว
+    # environment:
+    #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
+    env_file:
+      - ./apps/payments/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/payments คือ จะดึงค่าในไฟล์ .env(./apps/payments/.env) มา
 
   db:
     # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub

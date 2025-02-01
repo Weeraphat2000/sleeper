@@ -13,13 +13,10 @@ export class ReservationDocument extends AbstractDocument {
   endDate: Date;
 
   @Prop({ type: String })
+  invoiceId: string;
+
+  @Prop({ type: String })
   userId: string;
-
-  @Prop({ type: String })
-  placeId: string;
-
-  @Prop({ type: String })
-  inviteId: string;
 }
 
 export const ReservationSchema =

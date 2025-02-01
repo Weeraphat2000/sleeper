@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   Inject,
 } from '@nestjs/common';
-import { map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { AUTH_SERVICE } from '../constants/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { log } from 'console';
@@ -38,6 +38,7 @@ export class JwtAuthGuard implements CanActivate {
           };
         }),
         map(() => true),
+        catchError(() => of(false)), // คือ ถ้ามี error ให้ return false // authClient จะ return Observable กลับมา
       );
   }
 }

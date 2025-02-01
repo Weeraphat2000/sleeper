@@ -20,6 +20,12 @@ import { log } from 'console';
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
+  @Get('helloPayments')
+  async helloPayments() {
+    log('ReservationsController.helloPayments');
+    return this.reservationsService.helloPayments();
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(
