@@ -47,8 +47,6 @@ services:
       dockerfile: ./apps/payments/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/payments
       target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
     command: pnpm run start:dev payments # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev payments)
-    ports:
-      - '3003:3003' # แมปพอร์ต 3002 ภายใน container ออกมาที่พอร์ต 3002 บนเครื่องโฮสต์
     volumes:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ payments
     depends_on:
@@ -57,6 +55,20 @@ services:
     #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
     env_file:
       - ./apps/payments/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/payments คือ จะดึงค่าในไฟล์ .env(./apps/payments/.env) มา
+
+  notifications:
+    # ส่วนกำหนดวิธีการ build container สำหรับ service ชื่อ "notifications"
+    build:
+      context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
+      dockerfile: ./apps/notifications/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/notifications
+      target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
+    command: pnpm run start:dev notifications # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev notifications)
+    volumes:
+      - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ notifications
+    depends_on:
+      - db # ให้ container notifications ขึ้นหลังจาก db ขึ้นแล้ว
+    env_file:
+      - ./apps/notifications/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/notifications คือ จะดึงค่าในไฟล์ .env(./apps/notifications/.env) มา
 
   db:
     # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub

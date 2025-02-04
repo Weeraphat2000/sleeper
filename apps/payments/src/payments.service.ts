@@ -1,8 +1,10 @@
-import { CreateChargeDto } from '@app/common/dto/create-charge.dto';
-import { Injectable } from '@nestjs/common';
+import { NOTIFICATIONS_SERVICE } from '@app/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ClientProxy } from '@nestjs/microservices';
 import { log } from 'console';
 import Stripe from 'stripe';
+import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -12,13 +14,17 @@ export class PaymentsService {
       apiVersion: '2020-08-27' as '2025-01-27.acacia',
     },
   );
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    @Inject(NOTIFICATIONS_SERVICE)
+    private readonly notificationService: ClientProxy,
+  ) {}
 
   getHello(): string {
     return 'Hello Payments!';
   }
 
-  async createCharge({ card, amount }: CreateChargeDto) {
+  async createCharge({ card, amount, email }: PaymentsCreateChargeDto) {
     try {
       log('cardcard', card);
       log('amountamount', amount);
@@ -46,6 +52,10 @@ export class PaymentsService {
         // payment_method_types: ['card'],
       });
       log('pass createCharge', paymentIntent);
+
+      this.notificationService.emit('notify-email', {
+        email,
+      });
 
       return paymentIntent;
     } catch (error) {

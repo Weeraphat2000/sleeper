@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationsRepository } from './reservations.repository';
-import { PAYMENTS_SERVICE } from '@app/common';
+import { PAYMENTS_SERVICE, UserDTO } from '@app/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { log } from 'console';
 // import { map } from 'rxjs';
@@ -14,7 +14,10 @@ export class ReservationsService {
     @Inject(PAYMENTS_SERVICE) private readonly paymentsClient: ClientProxy,
   ) {}
 
-  async create(createReservationDto: CreateReservationDto, userId: string) {
+  async create(
+    createReservationDto: CreateReservationDto,
+    { email, _id: userId }: UserDTO,
+  ) {
     try {
       // return this.paymentsClient
       //   .send('create_charge', createReservationDto.charge)
@@ -31,7 +34,10 @@ export class ReservationsService {
 
       const test = new Promise((resolve, reject) => {
         this.paymentsClient
-          .send('create_charge', createReservationDto.charge)
+          .send('create_charge', {
+            ...createReservationDto.charge,
+            email,
+          })
           .subscribe({
             next: async (response) => {
               log('successsuccesssuccesssuccessna', response);
