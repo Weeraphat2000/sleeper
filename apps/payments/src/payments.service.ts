@@ -51,10 +51,10 @@ export class PaymentsService {
         // payment_method: paymentsMethod.id,
         // payment_method_types: ['card'],
       });
-      log('pass createCharge', paymentIntent);
 
       this.notificationService.emit('notify-email', {
         email,
+        text: `Your payment of ${amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} has been successfully processed.`,
       });
 
       return paymentIntent;
