@@ -4,11 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { log } from 'console';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Request, Response } from 'express';
-import { UserDocument } from './users/models/user.schema';
 import { ApiBody } from '@nestjs/swagger';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurrentUser } from '@app/common';
+import { CurrentUser, UserDocument } from '@app/common';
 
 // import { ApiTags } from '@nestjs/swagger';
 

@@ -10,6 +10,7 @@ WORKDIR /usr/src/app
 # คัดลอกไฟล์ package.json และ pnpm-lock.yaml เข้าไปใน image
 COPY package.json ./
 COPY pnpm-lock.yaml ./
+COPY tsconfig.json ./tsconfig.json
 
 # ติดตั้ง pnpm ใน container (เนื่องจาก image node:alpine ไม่มี pnpm มาให้)
 RUN npm install -g pnpm
@@ -18,7 +19,10 @@ RUN npm install -g pnpm
 RUN pnpm install
 
 # คัดลอกไฟล์ทั้งหมด (โค้ดโปรเจกต์) จากโฮสต์ไปยัง container
-COPY . .
+COPY apps/payments ./apps/payments
+COPY libs ./libs
+
+RUN cd apps/payments && pnpm install
 
 # รันคำสั่ง build ของโปรเจกต์ (เช่น ถ้าเราใช้ NestJS หรือ React ก็อาจจะเป็นคำสั่ง build)
 RUN pnpm run build
