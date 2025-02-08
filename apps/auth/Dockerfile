@@ -37,7 +37,7 @@ COPY libs ./libs
 # รัืนคำสั่ง pnpm install เพื่อติดตั้ง dependencies ทั้งหมด
 # ที่ระบุในไฟล์ package.json และ pnpm-lock.yaml
 ###############################################################
-RUN pnpm install
+RUN pnpm install -r
 
 ###############################################################
 # เข้าไปในโฟลเดอร์ apps/auth แล้วรันคำสั่ง pnpm install ซ้ำอีกครั้ง 

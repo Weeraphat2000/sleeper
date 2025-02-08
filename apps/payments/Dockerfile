@@ -21,7 +21,7 @@ COPY apps/payments ./apps/payments
 COPY libs ./libs
 
 # ติดตั้ง dependencies ทั้งหมดของโปรเจกต์ตามที่ระบุในไฟล์ pnpm-lock.yaml
-RUN pnpm install
+RUN pnpm install -r 
 
 # RUN cd apps/payments && pnpm install
 
