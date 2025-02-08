@@ -91,3 +91,5 @@ steps:
         'push',
         'asia-southeast1-docker.pkg.dev/mailer-450009/payments/production',
       ]
+options:
+  logging: CLOUD_LOGGING_ONLY
