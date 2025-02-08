@@ -18,17 +18,12 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./tsconfig.json
+COPY nest-cli.json ./nest-cli.json
 
 ###############################################################
 # ติดตั้ง pnpm ทั่วทั้งระบบ (Global) เพื่อให้ใช้ pnpm ได้จาก command line
 ###############################################################
 RUN npm install -g pnpm
-
-###############################################################
-# รันคำสั่ง pnpm install เพื่อดาวน์โหลดและติดตั้ง dependencies 
-# ที่กำหนดไว้ใน package.json โดยอ้างอิงจาก pnpm-lock.yaml
-###############################################################
-RUN pnpm install
 
 ###############################################################
 # คัดลอกโฟลเดอร์ apps/auth มายัง /usr/src/app/apps/auth 
@@ -39,16 +34,22 @@ COPY apps/auth ./apps/auth
 COPY libs ./libs
 
 ###############################################################
+# รัืนคำสั่ง pnpm install เพื่อติดตั้ง dependencies ทั้งหมด
+# ที่ระบุในไฟล์ package.json และ pnpm-lock.yaml
+###############################################################
+RUN pnpm install
+
+###############################################################
 # เข้าไปในโฟลเดอร์ apps/auth แล้วรันคำสั่ง pnpm install ซ้ำอีกครั้ง 
 # (กรณีที่ภายใน /apps/auth มีไฟล์ package.json และ dependencies เพิ่มเติม)
 ###############################################################
-RUN cd apps/auth && pnpm install
+# RUN cd apps/auth && pnpm install
 
 ###############################################################
 # รันคำสั่ง pnpm run build เพื่อ compile หรือ build โค้ด TypeScript 
 # ให้กลายเป็นไฟล์ JavaScript (ผลลัพธ์จะอยู่ใน dist)
 ###############################################################
-RUN pnpm run build
+RUN pnpm run build auth
 
 ###############################################################
 # เริ่มต้น Stage ใหม่ ชื่อ production โดยใช้ base image node:alpine

@@ -11,21 +11,22 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./tsconfig.json
+COPY nest-cli.json ./nest-cli.json
 
 # ติดตั้ง pnpm ใน container (เนื่องจาก image node:alpine ไม่มี pnpm มาให้)
 RUN npm install -g pnpm
-
-# ติดตั้ง dependencies ทั้งหมดของโปรเจกต์ตามที่ระบุในไฟล์ pnpm-lock.yaml
-RUN pnpm install
 
 # คัดลอกไฟล์ทั้งหมด (โค้ดโปรเจกต์) จากโฮสต์ไปยัง container
 COPY apps/payments ./apps/payments
 COPY libs ./libs
 
-RUN cd apps/payments && pnpm install
+# ติดตั้ง dependencies ทั้งหมดของโปรเจกต์ตามที่ระบุในไฟล์ pnpm-lock.yaml
+RUN pnpm install
+
+# RUN cd apps/payments && pnpm install
 
 # รันคำสั่ง build ของโปรเจกต์ (เช่น ถ้าเราใช้ NestJS หรือ React ก็อาจจะเป็นคำสั่ง build)
-RUN pnpm run build
+RUN pnpm run build payments
 
 # ----------------------------------------------------------------------------------------------------
 # Stage 2: Production
