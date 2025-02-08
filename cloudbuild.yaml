@@ -1,3 +1,6 @@
+#  Cloud Build เป็นบริการ CI/CD (Continuous Integration / Continuous Delivery) ของ Google Cloud ที่ช่วยให้เราสร้าง Pipeline สำหรับกระบวนการ Build, Test, และ Deploy ได้อย่างอัตโนมัติ
+# ไฟล์ cloudbuild.yaml จะทำหน้าที่เป็นตัวกำหนดลำดับ “ขั้นตอนการทำงาน (Pipeline)” ต่าง ๆ
+# เมื่อมีการ Trigger (เช่น Push โค้ดใหม่ขึ้น Git) ระบบจะรัน Pipeline ตามที่กำหนดไว้ในไฟล์นี้
 steps:
   # reservations
   - name: 'gcr.io/cloud-builders/docker' # This is the name of the builder
@@ -93,3 +96,6 @@ steps:
       ]
 options:
   logging: CLOUD_LOGGING_ONLY
+# options.logging: CLOUD_LOGGING_ONLY เป็นการกำหนดรูปแบบการเก็บ Log ของ Cloud Build ให้บันทึกเฉพาะใน Cloud Logging (ชื่อเดิมคือ Stackdriver Logging) เท่านั้น โดยจะ ไม่ บันทึก Log ลงใน Google Cloud Storage (GCS)
+
+# ไฟล์ cloudbuild.yaml นี้กำลังบอก Cloud Build ให้ อ่าน Dockerfile ในโฟลเดอร์ apps/reservations, สร้าง Image, ตั้ง Tag, แล้ว Push Image ไปยัง Registry ตามที่กำหนดไว้นั่นเองครับ
