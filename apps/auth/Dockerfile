@@ -37,13 +37,14 @@ COPY libs ./libs
 # รัืนคำสั่ง pnpm install เพื่อติดตั้ง dependencies ทั้งหมด
 # ที่ระบุในไฟล์ package.json และ pnpm-lock.yaml
 ###############################################################
-RUN pnpm install -r
+# RUN pnpm install -r
 
 ###############################################################
 # เข้าไปในโฟลเดอร์ apps/auth แล้วรันคำสั่ง pnpm install ซ้ำอีกครั้ง 
 # (กรณีที่ภายใน /apps/auth มีไฟล์ package.json และ dependencies เพิ่มเติม)
 ###############################################################
-# RUN cd apps/auth && pnpm install
+RUN pnpm install
+RUN cd apps/auth && pnpm install
 
 ###############################################################
 # รันคำสั่ง pnpm run build เพื่อ compile หรือ build โค้ด TypeScript 

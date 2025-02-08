@@ -37,12 +37,14 @@ COPY libs ./libs
 # รันคำสั่ง pnpm install -r คือ ติดตั้ง dependencies ทั้งหมด
 # -r คือ ใช้ pnpm-lock.yaml ในการติดตั้ง dependencies
 ###############################################################
-RUN pnpm install -r
+# RUN pnpm install -r
 
 ###############################################################
 # เข้าไปในโฟลเดอร์ apps/notifications แล้วรันคำสั่ง pnpm install ซ้ำอีกครั้ง
 # (กรณีที่ภายใน /apps/notifications มีไฟล์ package.json และ dependencies เพิ่มเติม)
 ###############################################################
+RUN pnpm install
+RUN cd apps/notifications && pnpm install
 # RUN cd apps/notifications && pnpm install
 
 ###############################################################

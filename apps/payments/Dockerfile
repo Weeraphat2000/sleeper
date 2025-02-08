@@ -21,9 +21,10 @@ COPY apps/payments ./apps/payments
 COPY libs ./libs
 
 # ติดตั้ง dependencies ทั้งหมดของโปรเจกต์ตามที่ระบุในไฟล์ pnpm-lock.yaml
-RUN pnpm install -r 
+# RUN pnpm install -r 
+RUN pnpm install
+RUN cd apps/payments && pnpm install
 
-# RUN cd apps/payments && pnpm install
 
 # รันคำสั่ง build ของโปรเจกต์ (เช่น ถ้าเราใช้ NestJS หรือ React ก็อาจจะเป็นคำสั่ง build)
 RUN pnpm run build payments
