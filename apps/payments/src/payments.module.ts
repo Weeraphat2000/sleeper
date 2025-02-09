@@ -14,7 +14,7 @@ import { NOTIFICATIONS_SERVICE } from '@app/common';
       validationSchema: Joi.object({
         PORT: Joi.number().required(),
         STRIPE_SECRET_KEY: Joi.string().required(),
-        STRIPE_PUBLIC_KEY: Joi.string().required(),
+        // STRIPE_PUBLIC_KEY: Joi.string().required(),
         NOTIFICATIONS_HOST: Joi.string().required(),
         NOTIFICATIONS_PORT: Joi.number().required(),
       }),
