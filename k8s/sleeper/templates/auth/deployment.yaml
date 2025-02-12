@@ -1,19 +1,50 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # ระบุว่าเรากำลังสร้าง resource ชนิด Deployment ภายใต้ group "apps/v1"
+kind: Deployment # ชนิดของ resource คือ Deployment
+# Deployment: ใช้ควบคุม Pod ให้มีจำนวนตามต้องการ และรองรับการอัปเดตเวอร์ชันแอปแบบ Rolling Update
 metadata:
   labels:
-    app: auth
-  name: auth
+    app: auth # label ที่ใช้ระบุว่า resource นี้เป็นแอปชื่อ "auth"
+  name: auth # ชื่อของ Deployment
 spec:
-  replicas: 1
+  replicas: 1 # จำนวน Pod (replicas) ที่ต้องการรัน (1 ตัว)
   selector:
     matchLabels:
-      app: auth
+      app: auth # ตัว selector จะ match กับ Pod ที่มี label "app: auth"
   template:
     metadata:
       labels:
-        app: auth
+        app: auth # กำหนด label ให้ Pod ที่สร้างจาก template เป็น "app: auth"
     spec:
       containers:
         - image: asia-southeast1-docker.pkg.dev/mailer-450009/auth/production
-          name: auth
+          # ชื่อ Image ของ Container ที่เราจะใช้รัน (Pull มาจาก Artifact Registry)
+          name: auth # ชื่อ Container
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb
+                  key: connectionString
+              # MONGODB_URI ถูกกำหนดค่าด้วยค่าใน Secret ชื่อ "mongodb" key "connectionString"
+              # (valueFrom ใช้ดึงข้อมูล Secret/ConfigMap ลงมาเป็น Environment Variable ได้)
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt
+                  key: jwtSercret
+              # JWT_SECRET ถูกกำหนดค่าด้วยข้อมูลใน Secret ชื่อ "jwt" key "jwtSercret"
+            - name: JWT_EXPIRATION
+              value: '7d'
+              # JWT_EXPIRATION กำหนดค่าเป็น "7d" ตรง ๆ (ไม่ได้มาจาก Secret)
+            - name: TCP_PORT
+              value: '3002'
+            - name: HTTP_PORT
+              value: '3003'
+          ports:
+            - containerPort: 3002
+            - containerPort: 3003
+          # ประกาศว่า Container นี้จะฟัง (listen) ที่พอร์ต 3002 และ 3003 ภายใน Container
+          # containerPort คือหมายเลขพอร์ตภายใน (inside) Container ที่เรากำหนดให้ Kubernetes รับรู้ว่า Container นั้นฟัง (Listen) อยู่ที่พอร์ตใดบ้าง
+
+          # ถ้าต้องการเปิดพอร์ตให้เข้าถึงจากภายนอก Cluster เราจะต้องกำหนด Service (เช่น NodePort หรือ LoadBalancer) เพื่อ map พอร์ตนอกเข้ามาที่พอร์ตภายใน Container อีกทีครับ.
