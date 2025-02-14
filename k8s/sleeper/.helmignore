@@ -21,3 +21,8 @@
 .idea/
 *.tmproj
 .vscode/
+
+# google.yaml
+# jwt.yaml
+# mongo.yaml
+# stripe.yaml

@@ -55,3 +55,9 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+k8s/sleeper/google.yaml
+k8s/sleeper/jwt.yaml
+k8s/sleeper/mongodb.yaml
+k8s/sleeper/stripe.yaml
+
