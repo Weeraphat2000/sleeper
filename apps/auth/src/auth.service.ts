@@ -14,7 +14,7 @@ export class AuthService {
   ) {}
 
   getHello(): string {
-    return 'Hello AuthAuthAuthAuth!';
+    return 'Hello AuthAuthAuthAuth AuthAuthAuthAuth!';
   }
 
   async login(user: UserDocument, res: Response) {
