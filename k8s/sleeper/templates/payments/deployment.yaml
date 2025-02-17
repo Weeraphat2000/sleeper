@@ -15,7 +15,7 @@ spec:
         app: payments
     spec:
       containers:
-        - image: asia-southeast1-docker.pkg.dev/mailer-450009/payments/production
+        - image: asia-southeast1-docker.pkg.dev/mailer-450009/payments/production:latest
           name: payments
           env:
             - name: PORT

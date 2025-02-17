@@ -16,7 +16,7 @@ spec:
         app: auth # กำหนด label ให้ Pod ที่สร้างจาก template เป็น "app: auth"
     spec:
       containers:
-        - image: asia-southeast1-docker.pkg.dev/mailer-450009/auth/production
+        - image: asia-southeast1-docker.pkg.dev/mailer-450009/auth/production:latest
           # ชื่อ Image ของ Container ที่เราจะใช้รัน (Pull มาจาก Artifact Registry)
           name: auth # ชื่อ Container
           env:

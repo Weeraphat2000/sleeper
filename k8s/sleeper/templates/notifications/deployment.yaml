@@ -15,7 +15,7 @@ spec:
         app: notifications
     spec:
       containers:
-        - image: asia-southeast1-docker.pkg.dev/mailer-450009/notifications/production
+        - image: asia-southeast1-docker.pkg.dev/mailer-450009/notifications/production:latest
           name: notifications
           env:
             - name: PORT

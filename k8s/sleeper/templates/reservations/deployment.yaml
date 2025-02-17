@@ -15,7 +15,7 @@ spec:
         app: reservations
     spec:
       containers:
-        - image: asia-southeast1-docker.pkg.dev/mailer-450009/reservations/production
+        - image: asia-southeast1-docker.pkg.dev/mailer-450009/reservations/production:latest
           name: reservations
           env:
             - name: MONGODB_URI
