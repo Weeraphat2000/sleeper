@@ -12,7 +12,7 @@ import { CurrentUser, UserDocument } from '@app/common';
 // import { ApiTags } from '@nestjs/swagger';
 
 // @ApiTags('') // จัดกลุ่ม (tag) ใน Swagger
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
