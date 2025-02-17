@@ -1,22 +1,22 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: networking.k8s.io/v1 # ใช้ API เวอร์ชัน networking.k8s.io/v1
+kind: Ingress # ประเภทของ Resource คือ Ingress
 metadata:
-  name: sleeper
+  name: sleeper # ชื่อของ Ingress คือ sleeper
 spec:
-  rules:
-    - http:
+  rules: # เริ่มต้นกำหนดกฎการ Routing
+    - http: # ระบุว่าเป็นกฎสำหรับโปรโตคอล HTTP
         paths:
-          - path: /reservations/*
+          - path: /reservations/* # ถ้ามี request ที่ path ขึ้นต้นด้วย /reservations/
             pathType: ImplementationSpecific
             backend:
               service:
-                name: reservations
+                name: reservations # ให้ส่งไปที่ Service ชื่อ reservations
                 port:
-                  number: 3004
-          - path: /auth/*
+                  number: 3004 # ใช้ port หมายเลข 3004 ของ Service reservations
+          - path: /auth/* # ถ้ามี request ที่ path ขึ้นต้นด้วย /auth/
             pathType: ImplementationSpecific
             backend:
               service:
-                name: auth-http
+                name: auth-http # ให้ส่งไปที่ Service ชื่อ auth-http
                 port:
-                  number: 3003
+                  number: 3003 # ใช้ port หมายเลข 3003 ของ Service auth-http
