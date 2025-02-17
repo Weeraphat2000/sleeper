@@ -6,14 +6,14 @@ spec:
   rules: # เริ่มต้นกำหนดกฎการ Routing
     - http: # ระบุว่าเป็นกฎสำหรับโปรโตคอล HTTP
         paths:
-          - path: /reservations/* # ถ้ามี request ที่ path ขึ้นต้นด้วย /reservations/
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: reservations # ให้ส่งไปที่ Service ชื่อ reservations
-                port:
-                  number: 3004 # ใช้ port หมายเลข 3004 ของ Service reservations
-          - path: /auth/* # ถ้ามี request ที่ path ขึ้นต้นด้วย /auth/
+          # - path: /reservations/* # ถ้ามี request ที่ path ขึ้นต้นด้วย /reservations/
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     service:
+          #       name: reservations # ให้ส่งไปที่ Service ชื่อ reservations
+          #       port:
+          #         number: 3004 # ใช้ port หมายเลข 3004 ของ Service reservations
+          - path: /* # ถ้ามี request ที่ path ขึ้นต้นด้วย /auth/
             pathType: ImplementationSpecific
             backend:
               service:
