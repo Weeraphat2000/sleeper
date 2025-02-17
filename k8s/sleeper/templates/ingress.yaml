@@ -13,8 +13,8 @@ spec:
           #       name: reservations # ให้ส่งไปที่ Service ชื่อ reservations
           #       port:
           #         number: 3004 # ใช้ port หมายเลข 3004 ของ Service reservations
-          - path: /auth # ถ้ามี request ที่ path ขึ้นต้นด้วย /auth/
-            pathType: Prefix
+          - path: /* # ถ้ามี request ที่ path ขึ้นต้นด้วย /auth/
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: auth-http # ให้ส่งไปที่ Service ชื่อ auth-http

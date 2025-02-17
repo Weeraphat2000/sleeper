@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { log } from 'console';
@@ -23,6 +31,11 @@ export class AuthController {
   getHello(): string {
     log(`ASSA: ${this.configService.get<string>('ASSA')}`); // จะดึงค่ามาจาก environment(.env) variable ที่ชื่อว่า ASSA
     return this.authService.getHello();
+  }
+
+  @Get(':name')
+  getHelloName(@Param('name') name: string): string {
+    return `Hello ${name}`;
   }
 
   @UseGuards(LocalAuthGuard)
