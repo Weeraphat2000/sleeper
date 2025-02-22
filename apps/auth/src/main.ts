@@ -53,6 +53,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = configService.get<number>('HTTP_PORT');
+  log(`last`);
   log(`PORT: ${port}`);
 
   await app.startAllMicroservices();
