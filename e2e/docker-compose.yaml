@@ -12,26 +12,26 @@ services:
       - db
 
   reservations:
-    image: asia-southeast1-docker.pkg.dev/mailer-450009/reservations/production
+    image: asia-southeast1-docker.pkg.dev/mailer-450009/reservations/production:latest
     ports:
       - '3000:3000'
     env_file:
       - ../apps/reservations/.env
 
   auth:
-    image: asia-southeast1-docker.pkg.dev/mailer-450009/auth/production
+    image: asia-southeast1-docker.pkg.dev/mailer-450009/auth/production:latest
     ports:
       - '3001:3001'
     env_file:
       - ../apps/auth/.env
 
   payments:
-    image: asia-southeast1-docker.pkg.dev/mailer-450009/payments/production
+    image: asia-southeast1-docker.pkg.dev/mailer-450009/payments/production:latest
     env_file:
       - ../apps/payments/.env
 
   notifications:
-    image: asia-southeast1-docker.pkg.dev/mailer-450009/notifications/production
+    image: asia-southeast1-docker.pkg.dev/mailer-450009/notifications/production:latest
     env_file:
       - ../apps/notifications/.env
 
