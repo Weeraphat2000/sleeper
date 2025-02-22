@@ -1,15 +1,15 @@
-apiVersion: v1
-kind: Service
+apiVersion: v1 # ระบุว่าไฟล์นี้ใช้ API version ของ Kubernetes ที่เป็น v1
+kind: Service # บอกว่า resource ที่สร้างคือ Service
 metadata:
-  labels:
-    app: auth
-  name: auth-tcp
+  labels: # กลุ่ม label ต่าง ๆ ที่จะถูกผูกติดกับ Service
+    app: auth # label "app: auth" เพื่อใช้ match กับ Pod (Deployment) ที่มี label เดียวกัน
+  name: auth-tcp # ตั้งชื่อ Service ว่า "auth-tcp"
 spec:
-  ports:
-    - name: 'tcp'
-      port: 3002
-      protocol: TCP
-      targetPort: 3002
+  ports: # ส่วนกำหนด port ที่ Service จะเปิดให้เข้าถึง
+    - name: 'tcp' # ชื่อ port (ใช้ใน config หรืออ้างอิงส่วนอื่น ๆ ได้)
+      port: 3002 # port ภายใน Cluster ที่ Service รับ request เข้ามา
+      protocol: TCP # โปรโตคอลที่ใช้ (TCP)
+      targetPort: 3002 # port ภายใน Pod ที่ Service forward traffic ไปให้
   selector:
-    app: auth
-  type: ClusterIP
+    app: auth # บอกว่า Service นี้จะส่ง traffic ไปยัง Pod (Deployment) ที่มี label "app: auth"
+  type: ClusterIP # ระบุว่าเป็น ClusterIP เพื่อ expose ภายใน Cluster (ไม่เปิด port บน Node ภายนอก)

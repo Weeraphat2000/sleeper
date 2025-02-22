@@ -99,3 +99,90 @@ options:
 # options.logging: CLOUD_LOGGING_ONLY เป็นการกำหนดรูปแบบการเก็บ Log ของ Cloud Build ให้บันทึกเฉพาะใน Cloud Logging (ชื่อเดิมคือ Stackdriver Logging) เท่านั้น โดยจะ ไม่ บันทึก Log ลงใน Google Cloud Storage (GCS)
 
 # ไฟล์ cloudbuild.yaml นี้กำลังบอก Cloud Build ให้ อ่าน Dockerfile ในโฟลเดอร์ apps/reservations, สร้าง Image, ตั้ง Tag, แล้ว Push Image ไปยัง Registry ตามที่กำหนดไว้นั่นเองครับ
+
+# steps:
+#   # STEP 1: Build Image #1
+#   - name: 'gcr.io/cloud-builders/docker'  # ใช้ Container Image จาก gcr.io/cloud-builders/docker ซึ่งมี Docker CLI ให้เรา
+#     id: "Build first image"               # ชื่อเล่น (id) ของ Step ไว้ดูใน Log
+#     args: [
+#       'build',                            # คำสั่ง docker build
+#       '-t',                               # ใช้ -t กำหนดชื่อ/แท็กของ Docker Image
+#       'asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME1>:latest', # ชื่อ Image + Tag (latest)
+#       '-f',                               # ใช้ -f เพื่อระบุ path ของ Dockerfile
+#       'apps/reservations/Dockerfile',     # ชี้ไปยัง Dockerfile สำหรับสร้าง Image ตัวแรก
+#       '.'                                 # บอกให้ใช้โฟลเดอร์ปัจจุบัน (.) เป็น build context
+#     ]
+
+#   # STEP 2: Push Image #1
+#   - name: 'gcr.io/cloud-builders/docker'  # ใช้ Container Image จาก gcr.io/cloud-builders/docker เช่นกัน
+#     id: "Push first image"
+#     args: [
+#       'push',                             # คำสั่ง docker push
+#       'asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME1>:latest'  # ชื่อ Image + Tag ที่จะ push
+#     ]
+
+#   # STEP 3: Build Image #2
+#   - name: 'gcr.io/cloud-builders/docker'
+#     id: "Build second image"
+#     args: [
+#       'build',
+#       '-t',
+#       'asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME2>:latest', # Image + Tag ตัวที่สอง
+#       '-f',
+#       'apps/auth/Dockerfile',             # Dockerfile ตัวที่สอง (ตัวอย่าง path apps/auth/Dockerfile)
+#       '.'
+#     ]
+
+#   # STEP 4: Push Image #2
+#   - name: 'gcr.io/cloud-builders/docker'
+#     id: "Push second image"
+#     args: [
+#       'push',                             # คำสั่ง docker push
+#       'asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME2>:latest'
+#     ]
+
+#   # STEP 5: ตั้งค่าการเชื่อมต่อกับ Kubernetes Cluster
+#   - name: 'gcr.io/cloud-builders/gcloud'  # ใช้ Container Image จาก gcr.io/cloud-builders/gcloud ซึ่งมี gcloud CLI
+#     id: "Get credentials"
+#     entrypoint: 'gcloud'
+#     args: [
+#       'container',
+#       'clusters',
+#       'get-credentials',                  # ดึง credentials สำหรับจัดการ Cluster
+#       '<CLUSTER_NAME>',                   # ชื่อ Cluster ของเรา (sleeper)
+
+#      # ถ้าเป็น regional cluster ให้ใช้ --region แทน --zone
+#       '--zone=<ZONE>',                    # Zone ที่ Cluster ตั้งอยู่ (เช่น asia-southeast1-a)
+#       '--region=<REGION>',                # Region ที่ Cluster ตั้งอยู่ (asia-southeast1)
+#       '--project=<PROJECT_ID>'            # Project ID ที่ใช้
+#     ]
+
+#   # STEP 6: ติดตั้ง Helm (ถ้าจำเป็น) และ Deploy ด้วย Helm
+#   - name: 'gcr.io/cloud-builders/kubectl' # ใช้ Container Image จาก gcr.io/cloud-builders/kubectl (มี kubectl ให้ใช้)
+#     id: "Deploy with Helm"
+#     entrypoint: 'bash'                   # รันด้วย bash เพราะเราจะสั่งหลายคำสั่งในสคริปต์
+#     args:
+#       - '-c'
+#       - |
+#         # ติดตั้ง Helm (ถ้าภายใน container ไม่มี)
+#         apt-get update && apt-get install -y wget
+#         wget https://get.helm.sh/helm-v3.11.0-linux-amd64.tar.gz
+#         tar xvf helm-v3.11.0-linux-amd64.tar.gz
+#         mv linux-amd64/helm /usr/local/bin/helm
+
+#         # สั่ง Helm Deploy (Upgrade/Install)
+#         # --install = ถ้ายังไม่มี release ชื่อเดียวกัน จะติดตั้งใหม่
+#         # --upgrade = ถ้ามี release อยู่แล้วจะอัปเกรด
+#         # --set image1.repository=... และ image2.repository=... คือระบุชื่อ Image ให้ chart รู้
+#         helm upgrade --install sleeper ./k8s/sleeper \
+#           --namespace default \
+#           --set image1.repository="asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME1>" \
+#           --set image2.repository="asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME2>" \
+#           --set image1.tag="latest" \
+#           --set image2.tag="latest" \
+#           --wait                            # รอจนกว่าการ deploy จะสำเร็จหรือเกิด timeout ก่อน step จะจบ
+
+# # ส่วนนี้จะบอกว่า Pipeline จะสร้าง Artifacts (Images) อะไรบ้างหลังจบขั้นตอน
+# images:
+#   - 'asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME1>:latest'
+#   - 'asia-southeast1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/<IMAGE_NAME2>:latest'
