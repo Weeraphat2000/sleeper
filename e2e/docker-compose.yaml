@@ -29,11 +29,15 @@ services:
     image: asia-southeast1-docker.pkg.dev/mailer-450009/payments/production:latest
     env_file:
       - ../apps/payments/.env
+    ports:
+      - '3003:3003'
 
   notifications:
     image: asia-southeast1-docker.pkg.dev/mailer-450009/notifications/production:latest
     env_file:
       - ../apps/notifications/.env
+    ports:
+      - '3004:3004'
 
   db:
     image: mongo

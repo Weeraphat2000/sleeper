@@ -28,5 +28,7 @@ export class AuthService {
     expires.setDate(expires.getDate() + 7);
     const token = this.jwtService.sign(payload);
     res.cookie('Authentication', token, { httpOnly: true, expires });
+
+    return token;
   }
 }

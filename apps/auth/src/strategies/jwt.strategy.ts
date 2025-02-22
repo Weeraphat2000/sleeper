@@ -25,7 +25,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwtnaa') {
       // jwtFromRequest จะดึง token จาก request ที่ส่งมา โดยในที่นี้จะดึงจาก request ที่ส่งมาใน cookie ที่ชื่อว่า Authentication
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: any) =>
-          request?.cookies?.Authentication || request?.Authentication, // request?.Authentication จาก TCP
+          request?.cookies?.Authentication ||
+          request?.Authentication ||
+          request?.headers?.Authentication, // request?.Authentication จาก TCP
       ]),
 
       // ExtractJwt.fromAuthHeaderAsBearerToken() จะดึง token จาก Authorization header และตัด Bearer ออก

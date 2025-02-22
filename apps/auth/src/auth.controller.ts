@@ -62,8 +62,8 @@ export class AuthController {
   ) {
     log('AuthController.login', user);
     log('reqUser', req.user);
-    await this.authService.login(user, res);
-    res.send(user);
+    const token = await this.authService.login(user, res);
+    res.send(token);
 
     // const token = this.authService.login(user);
     // res.cookie('token', token, { httpOnly: true });
