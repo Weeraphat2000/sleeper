@@ -10,7 +10,9 @@ services:
     restart: always # กำหนดให้ container รันอัตโนมัติเมื่อเกิดข้อผิดพลาด
     command: pnpm run start:dev servervations # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev server)
     ports:
-      - '3000:3000' # แมปพอร์ต 3000 ภายใน container ออกมาที่พอร์ต 3000 บนเครื่องโฮสต์
+      - '3000:3000' # แมปพอร์ต 3000 ภายใน container ออกมาที่พอร์ต 3000 บนเครื่องโฮสต์ for run server
+
+      # - '9229:9229' # แมปพอร์ต 9229 ภายใน container ออกมาที่พอร์ต 9229 บนเครื่องโฮสต์ for debugging
     volumes:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ reservations
     depends_on:
