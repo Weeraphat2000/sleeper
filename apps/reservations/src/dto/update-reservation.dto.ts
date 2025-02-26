@@ -38,7 +38,7 @@ export class UpdateReservationDto extends PartialType(CreateReservationDto) {
   })
   @IsOptional()
   @IsString()
-  userId?: string;
+  userId?: number;
 
   @ApiProperty({
     title: 'placeId',

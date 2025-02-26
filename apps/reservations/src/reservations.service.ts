@@ -2,10 +2,10 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationsRepository } from './reservations.repository';
-import { PAYMENTS_SERVICE, UserDTO } from '@app/common';
+import { PAYMENTS_SERVICE, User } from '@app/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { log } from 'console';
-// import { map } from 'rxjs';
+import { Reservation } from './models/reservation.entity';
 
 @Injectable()
 export class ReservationsService {
@@ -16,22 +16,9 @@ export class ReservationsService {
 
   async create(
     createReservationDto: CreateReservationDto,
-    { email, _id: userId }: UserDTO,
+    { email, id: userId }: User,
   ) {
     try {
-      // return this.paymentsClient
-      //   .send('create_charge', createReservationDto.charge)
-      //   .pipe(
-      //     map(() => {
-      //       const reservation = this.reservationsRepository.create({
-      //         ...createReservationDto,
-      //         timestamp: new Date(),
-      //         userId,
-      //       });
-      //       return reservation;
-      //     }),
-      //   );
-
       const test = new Promise((resolve, reject) => {
         this.paymentsClient
           .send('create_charge', {
@@ -41,13 +28,16 @@ export class ReservationsService {
           .subscribe({
             next: async (response) => {
               log('successsuccesssuccesssuccessna', response);
-              const reservation = await this.reservationsRepository.create({
+              const reservation = new Reservation({
                 ...createReservationDto,
-                invoiceId: response.id,
                 timestamp: new Date(),
+                invoiceId: response.id,
                 userId,
               });
-              resolve(reservation);
+              const result =
+                await this.reservationsRepository.create(reservation);
+
+              resolve(result);
             },
             error: (error) => {
               log('errorna', error);
@@ -77,19 +67,19 @@ export class ReservationsService {
     return this.reservationsRepository.find({});
   }
 
-  async findOne(_id: string) {
-    return this.reservationsRepository.find({ _id });
+  async findOne(id: number) {
+    return this.reservationsRepository.find({ id });
   }
 
-  async update(_id: string, updateReservationDto: UpdateReservationDto) {
+  async update(id: number, updateReservationDto: UpdateReservationDto) {
     return this.reservationsRepository.findOneAndUpdate(
-      { _id },
-      { $set: updateReservationDto },
+      { id },
+      updateReservationDto,
     );
   }
 
-  async remove(_id: string) {
-    return this.reservationsRepository.findOneAndDelete({ _id });
+  async remove(id: number) {
+    return this.reservationsRepository.findOneAndDelete({ id });
   }
 
   async helloPayments() {

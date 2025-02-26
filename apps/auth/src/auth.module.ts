@@ -17,7 +17,6 @@ import { HealthModule } from '@app/common';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        MONGODB_URI: Joi.string().required(), // configModule จะต้องมี MONGODB_URI
         JWT_SECRET: Joi.string().required(), // configModule จะต้องมี JWT_SECRET
         JWT_EXPIRATION: Joi.string().required(), // configModule จะต้องมี JWT_EXPIRATION
         HTTP_PORT: Joi.number().required(), // configModule จะต้องมี PORT

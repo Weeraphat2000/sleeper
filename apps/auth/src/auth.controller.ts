@@ -15,7 +15,7 @@ import { Request, Response } from 'express';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurrentUser, UserDocument } from '@app/common';
+import { CurrentUser, User } from '@app/common';
 
 // import { ApiTags } from '@nestjs/swagger';
 
@@ -56,7 +56,7 @@ export class AuthController {
   })
   @Post('login')
   async login(
-    @CurrentUser() user: UserDocument,
+    @CurrentUser() user: User,
     @Res({ passthrough: true }) res: Response,
     @Req() req: Request,
   ) {

@@ -4,14 +4,12 @@ import { UsersService } from './users.service';
 import { DatabaseModule } from '@app/common/database';
 import { LoggerModule } from '@app/common/logger/logger.module';
 import { UsersRepository } from './users.repository';
-import { UserDocument, UserSchema } from '@app/common';
+import { Role, User } from '@app/common';
 
 @Module({
   imports: [
     DatabaseModule,
-    DatabaseModule.forFeature([
-      { name: UserDocument.name, schema: UserSchema },
-    ]),
+    DatabaseModule.forFeature([User, Role]),
     LoggerModule,
   ],
   controllers: [UsersController],

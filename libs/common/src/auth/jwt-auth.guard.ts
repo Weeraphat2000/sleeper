@@ -10,8 +10,8 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 import { AUTH_SERVICE } from '../constants/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { log } from 'console';
-import { UserDTO } from '../dto';
 import { Reflector } from '@nestjs/core';
+import { User } from '../models';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -38,7 +38,7 @@ export class JwtAuthGuard implements CanActivate {
     log('rolesssss', roles); // จะถูกส่งเข้ามาจาก @Roles('admin')(decorator) ใน controller
 
     return this.authClient
-      .send<UserDTO>('authenticate', {
+      .send<User>('authenticate', {
         Authentication: jwt,
       })
       .pipe(
@@ -47,7 +47,7 @@ export class JwtAuthGuard implements CanActivate {
 
           if (roles) {
             for (const role of roles) {
-              if (!response?.roles?.includes(role)) {
+              if (!response?.roles?.map((role) => role.name).includes(role)) {
                 this.logger.error('The user does not have valid roles');
                 throw new UnauthorizedException('Unauthorized');
               }

@@ -44,7 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwtnaa') {
 
     // จะ return user ออกไปให้ Passport ใช้งานต่อ
     // passport จะสร้าง key user ใน request (request.user) ให้ Passport ใช้งานต่อ
-    const user = await this.userService.getUser({ _id: payload.userId });
+    const user = await this.userService.getUser({ id: payload.userId });
     log('useruseruser', user);
     delete user.password;
     return {

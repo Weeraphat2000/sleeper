@@ -1,9 +1,10 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcryptjs';
 import { log } from 'console';
-import { GetUserDTO } from './dto/get-user.dto';
+import { GetUserDto } from './dto/get-user.dto';
+import { Role, User } from '@app/common';
 
 @Injectable()
 export class UsersService {
@@ -18,22 +19,38 @@ export class UsersService {
     return null;
   }
 
-  async create(createUserDTO: CreateUserDTO) {
-    await this.validateCreateUserDTO(createUserDTO);
-    return this.usersRepository.create({
-      ...createUserDTO,
-      password: await bcrypt.hash(createUserDTO.password, 10),
+  async create(createUserDto: CreateUserDto) {
+    await this.validateCreateUser(createUserDto);
+
+    const user = new User({
+      ...createUserDto,
+      password: await bcrypt.hash(createUserDto.password, 10),
+      roles: createUserDto.roles?.map((role) => new Role(role)),
     });
+
+    return this.usersRepository.create(user);
+
+    // return this.usersRepository.create({
+    //   id: 1,
+    //   email: 'test@gmail.com',
+    //   password: '123456',
+    //   roles: [
+    //     {
+    //       name: 'admin',
+    //       id: 1,
+    //     },
+    //   ],
+    // });
   }
 
-  async getUser(getuserDTO: GetUserDTO) {
-    return this.usersRepository.findOne(getuserDTO);
+  async getUser(getUserDto: GetUserDto) {
+    return this.usersRepository.findOne(getUserDto, { roles: true });
   }
 
-  private async validateCreateUserDTO(createUserDTO: CreateUserDTO) {
+  private async validateCreateUser(createUserDto: CreateUserDto) {
     try {
       await this.usersRepository.findOne({
-        email: createUserDTO.email,
+        email: createUserDto.email,
       });
     } catch (e) {
       return null;

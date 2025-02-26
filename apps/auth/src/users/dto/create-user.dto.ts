@@ -2,13 +2,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsEmail,
-  IsNotEmpty,
   IsOptional,
-  IsString,
   IsStrongPassword,
+  ValidateNested,
 } from 'class-validator';
+import { RoleDto } from './role.dto';
+import { Type } from 'class-transformer';
 
-export class CreateUserDTO {
+export class CreateUserDto {
   @ApiProperty({
     title: 'email',
     description: 'The email of the User',
@@ -29,7 +30,7 @@ export class CreateUserDTO {
 
   @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  @IsNotEmpty({ each: true })
-  roles?: string[];
+  @ValidateNested()
+  @Type(() => RoleDto)
+  roles?: RoleDto[];
 }
