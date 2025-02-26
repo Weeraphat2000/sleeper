@@ -12,7 +12,7 @@ export class PaymentsService {
     this.configService.get<string>('STRIPE_SECRET_KEY'),
     {
       // apiVersion: '2020-08-27' as '2025-01-27.acacia',
-      apiVersion: '2025-01-27.acacia',
+      apiVersion: '2020-08-27' as Stripe.LatestApiVersion,
     },
   );
   constructor(
