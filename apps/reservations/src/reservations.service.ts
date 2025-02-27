@@ -11,7 +11,7 @@ import { Reservation } from './models/reservation.entity';
 export class ReservationsService {
   constructor(
     private readonly reservationsRepository: ReservationsRepository,
-    @Inject(PAYMENTS_SERVICE) private readonly paymentsClient: ClientProxy,
+    @Inject(PAYMENTS_SERVICE) private readonly paymentsClient: ClientProxy, // ใช้งาน paymentsClient ที่เราสร้างไว้ใน payments.module.ts
   ) {}
 
   async create(
@@ -19,6 +19,9 @@ export class ReservationsService {
     { email, id: userId }: User,
   ) {
     try {
+      // *****
+      // ใช้งาน paymentsClient ที่เราสร้างไว้ใน payments.module.ts
+      // โดยส่งข้อมูลไปยัง service อื่นๆ ด้วย .send()
       const test = new Promise((resolve, reject) => {
         this.paymentsClient
           .send('create_charge', {
@@ -83,6 +86,14 @@ export class ReservationsService {
   }
 
   async helloPayments() {
-    return this.paymentsClient.send('getHello', {});
+    // *****
+    //     ความต่างระหว่าง .send() กับ .emit()
+    // 	•	.send(pattern, data):
+    // NestJS จะทำงานแบบ RPC → Caller จะส่งข้อความไปยัง Queue แล้ว “รอให้ Consumer ตอบกลับ” ถ้าไม่มี Consumer ที่ match pattern นั้น = ไม่ได้รับคำตอบ = Timeout = เกิด Error 500 ที่ฝั่ง Caller
+    // 	•	.emit(pattern, data):
+    // NestJS จะทำงานแบบ “Fire-and-forget” → Caller จะส่งข้อความไป Queue แล้วไม่ต้องการคำตอบ → หากยังไม่มี Consumer มาฟัง Queue ก็จะ “ค้าง” อยู่ใน Queue ไปก่อน จนกว่าจะมี Consumer มาเชื่อมต่อ
+    const result = this.paymentsClient.send('getHello', {});
+    log('resultresultresult', result);
+    return result;
   }
 }

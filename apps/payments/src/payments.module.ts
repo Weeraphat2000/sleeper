@@ -23,15 +23,15 @@ import { NOTIFICATIONS_SERVICE } from '@app/common';
     ClientsModule.registerAsync([
       {
         inject: [ConfigService],
-        name: NOTIFICATIONS_SERVICE,
+        name: NOTIFICATIONS_SERVICE, // ชื่อ service ที่เราตั้งเอง เพื่อใช้ในการเรียกใช้งาน service อื่นๆ เพื่อ inject ลงไปใน constructor
         useFactory: (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URI')],
             queue: 'notifications',
-            // queueOptions: {
-            //   durable: true, // ถ้า durable เป็น true จะทำให้ queue ที่สร้างขึ้นมีความทนทาน ถ้า RabbitMQ ปิดแล้วเปิดขึ้นมาอีกครั้ง ข้อมูลใน queue จะยังอยู่
-            // },
+            queueOptions: {
+              durable: true, // ถ้า durable เป็น true จะทำให้ queue ที่สร้างขึ้นมีความทนทาน ถ้า RabbitMQ ปิดแล้วเปิดขึ้นมาอีกครั้ง ข้อมูลใน queue จะยังอยู่
+            },
           },
         }),
       },

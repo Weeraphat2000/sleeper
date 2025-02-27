@@ -12,6 +12,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
   const configService = app.get(ConfigService);
 
+  // สร้าง microservice ที่เชื่อมต่อกับ RabbitMQ โดยใช้ Transport.RMQ
+  // และกำหนด queue = 'auth' ซึ่งเป็นชื่อ queue ที่เราตั้งเอง
   app.connectMicroservice({
     transport: Transport.RMQ,
     options: {
@@ -56,8 +58,9 @@ async function bootstrap() {
   log(`last`);
   log(`PORT: ${port}`);
 
-  await app.startAllMicroservices();
-  await app.listen(port);
+  await app.startAllMicroservices(); // เริ่มต้น microservice ที่เราสร้างขึ้น
+  await app.listen(port); // เริ่มต้นแอปของเราที่ port ที่เรากำหนดไว้ใน .env หรือใน config ของเรา
   // await app.listen(process.env.port ?? 3001);
 }
 bootstrap();
+// พอรันแอปเสร็จ มันจะฟัง request ผ่าน HTTP Port (เช่น localhost:3000) และก็ฟัง RabbitMQ Queue (ชื่อ 'auth') เพื่อรับ message ทาง AMQP ได้ด้วย

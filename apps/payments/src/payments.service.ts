@@ -17,7 +17,7 @@ export class PaymentsService {
   );
   constructor(
     private readonly configService: ConfigService,
-    @Inject(NOTIFICATIONS_SERVICE)
+    @Inject(NOTIFICATIONS_SERVICE) // ใช้งาน service ที่เราสร้างไว้ใน payments.module.ts
     private readonly notificationService: ClientProxy,
   ) {}
 

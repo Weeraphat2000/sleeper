@@ -28,6 +28,8 @@ import { HealthModule } from '@app/common';
         PAYMENTS_HOST: Joi.string().required(),
       }),
     }),
+    // *****
+    // สร้าง client สำหรับเรียกใช้งาน service อื่นๆ โดยใช้ ClientsModule.registerAsync()
     ClientsModule.registerAsync([
       {
         inject: [ConfigService],
@@ -37,23 +39,23 @@ import { HealthModule } from '@app/common';
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URI')],
             queue: 'auth',
-            // queueOptions: {
-            //   durable: true, // ถ้า durable เป็น true จะทำให้ queue ที่สร้างขึ้นมีความทนทาน ถ้า RabbitMQ ปิดแล้วเปิดขึ้นมาอีกครั้ง ข้อมูลใน queue จะยังอยู่
-            // },
+            queueOptions: {
+              durable: true, // ถ้า durable เป็น true จะทำให้ queue ที่สร้างขึ้นมีความทนทาน ถ้า RabbitMQ ปิดแล้วเปิดขึ้นมาอีกครั้ง ข้อมูลใน queue จะยังอยู่
+            },
           },
         }),
       },
       {
         inject: [ConfigService],
-        name: PAYMENTS_SERVICE,
+        name: PAYMENTS_SERVICE, // ชื่อ service ที่เราตั้งเอง
         useFactory: (configService: ConfigService) => ({
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('RABBITMQ_URI')],
             queue: 'payments',
-            // queueOptions: {
-            //   durable: true, // ถ้า durable เป็น true จะทำให้ queue ที่สร้างขึ้นมีความทนทาน ถ้า RabbitMQ ปิดแล้วเปิดขึ้นมาอีกครั้ง ข้อมูลใน queue จะยังอยู่
-            // },
+            queueOptions: {
+              durable: true, // ถ้า durable เป็น true จะทำให้ queue ที่สร้างขึ้นมีความทนทาน ถ้า RabbitMQ ปิดแล้วเปิดขึ้นมาอีกครั้ง ข้อมูลใน queue จะยังอยู่
+            },
           },
         }),
       },
