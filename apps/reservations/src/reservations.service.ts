@@ -44,7 +44,8 @@ export class ReservationsService {
             },
             error: (error) => {
               log('errorna', error);
-              reject(error);
+              reject(error); // reject จะทำให้ promise นี้เป็น rejected และจะเข้าไปที่ catch ของ promise นี้
+              // resolve(error); // ถ้าใช้ resolve จะทำให้ promise นี้เป็น resolved และจะเข้าไปที่ then ของ promise นี้
             },
             complete: () => {
               log('completena');

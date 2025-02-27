@@ -1,6 +1,6 @@
 import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { log } from 'console';
 import { NotifyEmailDto } from './dto/notify-email.dto';
 
@@ -15,8 +15,18 @@ export class NotificationsController {
 
   @UsePipes(new ValidationPipe())
   @EventPattern('notify-email')
-  async handleEmailNotification(@Payload() payload: NotifyEmailDto) {
+  async handleEmailNotification(
+    @Payload() payload: NotifyEmailDto,
+    @Ctx() context: RmqContext,
+  ) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+
     log('Sending email notification', payload);
-    return this.notificationsService.notifyEmail(payload);
+
+    const result = await this.notificationsService.notifyEmail(payload);
+
+    channel.ack(originalMsg);
+    return result;
   }
 }
