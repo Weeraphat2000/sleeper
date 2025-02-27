@@ -79,6 +79,13 @@ services:
     ports:
       - '3307:3306' # แมปพอร์ต 3306 ภายใน container ออกมาที่พอร์ต 3306 บนเครื่องโฮสต์
 
+  rabbitmq:
+    image: rabbitmq # ระบุ image ที่จะใช้สร้าง container สำหรับ service ชื่อ "rabbitmq"
+    # env_file:
+    #   - .env
+    ports:
+      - '5672:5672' # แมปพอร์ต 5672 ภายใน container ออกมาที่พอร์ต 5672 บนเครื่องโฮสต์
+      # - '15672:15672' # แมปพอร์ต 15672 ภายใน container ออกมาที่พอร์ต 15672 บนเครื่องโฮสต์
 #   db:
 #     # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub
 #     image: mongo
