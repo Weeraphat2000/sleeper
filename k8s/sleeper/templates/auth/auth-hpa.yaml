@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auth-hpa # ชื่อ HPA
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auth # ต้องตรงกับชื่อ Deployment ที่ต้องการ Scale
+  minReplicas: 1 # จำนวน Pods ขั้นต่ำ
+  maxReplicas: 3 # จำนวน Pods สูงสุด
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70 # ถ้าใช้ CPU เกิน 70% ให้ Scale ขึ้น
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80 # ถ้าใช้ Memory เกิน 80% ให้ Scale ขึ้น

@@ -18,6 +18,7 @@ spec:
       containers:
         - image: asia-southeast1-docker.pkg.dev/mailer-450009/auth/production:latest
           # ชื่อ Image ของ Container ที่เราจะใช้รัน (Pull มาจาก Artifact Registry)
+          # imagePullPolicy: Always  # ดึงอิมเมจใหม่ทุกครั้งที่ Deploy
           name: auth # ชื่อ Container
           env:
             - name: MONGODB_URI
@@ -48,3 +49,11 @@ spec:
           # containerPort คือหมายเลขพอร์ตภายใน (inside) Container ที่เรากำหนดให้ Kubernetes รับรู้ว่า Container นั้นฟัง (Listen) อยู่ที่พอร์ตใดบ้าง
 
           # ถ้าต้องการเปิดพอร์ตให้เข้าถึงจากภายนอก Cluster เราจะต้องกำหนด Service (เช่น NodePort หรือ LoadBalancer) เพื่อ map พอร์ตนอกเข้ามาที่พอร์ตภายใน Container อีกทีครับ.
+
+          resources: # ✅ เพิ่ม Resource Requests & Limits
+            requests:
+              memory: '128Mi'
+              cpu: '100m' # ขอ CPU 100m (0.1 vCPU)
+            limits:
+              memory: '256Mi'
+              cpu: '250m' # ใช้ CPU ได้สูงสุด 250m (0.25 vCPU)
