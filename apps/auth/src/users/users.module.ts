@@ -5,6 +5,7 @@ import { DatabaseModule } from '@app/common/database';
 import { LoggerModule } from '@app/common/logger/logger.module';
 import { UsersRepository } from './users.repository';
 import { UserDocument, UserSchema } from '@app/common';
+import { UserResolver } from '../user.resolver';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { UserDocument, UserSchema } from '@app/common';
     LoggerModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
+  providers: [UsersService, UsersRepository, UserResolver],
   // export ให้ UsersService และ UsersRepository ใช้งานได้จากภายนอก
   exports: [UsersService, UsersRepository],
 })

@@ -1,3 +1,4 @@
+import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
@@ -8,6 +9,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 
+@InputType()
 export class CreateUserDTO {
   @ApiProperty({
     title: 'email',
@@ -15,6 +17,7 @@ export class CreateUserDTO {
     example: 'example@gmail.com',
     type: String,
   })
+  @Field(() => String)
   @IsEmail()
   email: string;
 
@@ -25,11 +28,13 @@ export class CreateUserDTO {
     type: String,
   })
   @IsStrongPassword()
+  @Field(() => String)
   password: string;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty({ each: true })
+  @Field(() => [String], { nullable: true })
   roles?: string[];
 }

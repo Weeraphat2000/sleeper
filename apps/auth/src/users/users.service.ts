@@ -40,4 +40,8 @@ export class UsersService {
     }
     throw new UnprocessableEntityException('User already exists');
   }
+
+  async findAll() {
+    return this.usersRepository.find({});
+  }
 }

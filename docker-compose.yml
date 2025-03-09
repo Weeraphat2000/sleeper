@@ -72,6 +72,22 @@ services:
     env_file:
       - ./apps/notifications/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/notifications คือ จะดึงค่าในไฟล์ .env(./apps/notifications/.env) มา
 
+  gateway:
+    # ส่วนกำหนดวิธีการ build container สำหรับ service ชื่อ "gateway"
+    build:
+      context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
+      dockerfile: ./apps/gateway/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/gateway
+      target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
+    command: pnpm run start:dev gateway # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev gateway)
+    ports:
+      - '3004:3004' # แมปพอร์ต 4000 ภายใน container ออกมาที่พอร์ต 4000 บนเครื่องโฮสต์
+    volumes:
+      - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ gateway
+    # depends_on:
+    #   - db # ให้ container gateway ขึ้นหลังจาก db ขึ้นแล้ว
+    env_file:
+      - ./apps/gateway/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/gateway คือ จะดึงค่าในไฟล์ .env(./apps/gateway/.env) มา
+
   db:
     # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub
     image: mongo
