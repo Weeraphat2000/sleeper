@@ -1,22 +1,22 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { ReservationsRepository } from './reservations.repository';
-import { PAYMENTS_SERVICE, UserDTO } from '@app/common';
+import { PAYMENTS_SERVICE, User } from '@app/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { log } from 'console';
+import { PrismaService } from './prisma.service';
 // import { map } from 'rxjs';
 
 @Injectable()
 export class ReservationsService {
   constructor(
-    private readonly reservationsRepository: ReservationsRepository,
+    private readonly prismaService: PrismaService,
     @Inject(PAYMENTS_SERVICE) private readonly paymentsClient: ClientProxy,
   ) {}
 
   async create(
     createReservationDto: CreateReservationDto,
-    { email, _id: userId }: UserDTO,
+    { email, id: userId }: User,
   ) {
     try {
       // return this.paymentsClient
@@ -41,11 +41,15 @@ export class ReservationsService {
           .subscribe({
             next: async (response) => {
               log('successsuccesssuccesssuccessna', response);
-              const reservation = await this.reservationsRepository.create({
-                ...createReservationDto,
-                invoiceId: response.id,
-                timestamp: new Date(),
-                userId,
+              log('invoiceId', response.invoiceId);
+              const reservation = await this.prismaService.reservation.create({
+                data: {
+                  endDate: createReservationDto.endDate,
+                  invoiceId: response.id,
+                  startDate: createReservationDto.startDate,
+                  userId,
+                  timestamp: new Date(),
+                },
               });
               resolve(reservation);
             },
@@ -74,22 +78,22 @@ export class ReservationsService {
   }
 
   async findAll() {
-    return this.reservationsRepository.find({});
+    return this.prismaService.reservation.findMany();
   }
 
-  async findOne(_id: string) {
-    return this.reservationsRepository.find({ _id });
+  async findOne(id: number) {
+    return this.prismaService.reservation.findUnique({ where: { id } });
   }
 
-  async update(_id: string, updateReservationDto: UpdateReservationDto) {
-    return this.reservationsRepository.findOneAndUpdate(
-      { _id },
-      { $set: updateReservationDto },
-    );
+  async update(id: number, updateReservationDto: UpdateReservationDto) {
+    return this.prismaService.reservation.update({
+      where: { id },
+      data: updateReservationDto,
+    });
   }
 
-  async remove(_id: string) {
-    return this.reservationsRepository.findOneAndDelete({ _id });
+  async remove(id: number) {
+    return this.prismaService.reservation.delete({ where: { id } });
   }
 
   async helloPayments() {

@@ -12,6 +12,7 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./tsconfig.json
 COPY nest-cli.json ./nest-cli.json
+COPY apps/reservations/prisma ./prisma
 
 # ติดตั้ง pnpm ใน container (เนื่องจาก image node:alpine ไม่มี pnpm มาให้)
 RUN npm install -g pnpm
@@ -22,6 +23,8 @@ COPY libs ./libs
 
 # ติดตั้ง dependencies ทั้งหมดของโปรเจกต์ตามที่ระบุในไฟล์ pnpm-lock.yaml
 RUN pnpm install
+
+RUN pnpm prisma generate
 
 # รันคำสั่ง build ของโปรเจกต์ (เช่น ถ้าเราใช้ NestJS หรือ React ก็อาจจะเป็นคำสั่ง build)
 RUN pnpm run build reservations
@@ -54,4 +57,4 @@ COPY --from=development /usr/src/app/dist ./dist
 
 # กำหนดคำสั่งเริ่มต้น (entrypoint) เมื่อตัว container รันขึ้นมา
 # ในตัวอย่างนี้ให้ใช้ node รันไฟล์ main.js ซึ่งเป็นไฟล์หลักของโปรเจกต์
-CMD ["node", "dist/apps/reservations/main.js"]
+CMD ["pnpm", "run", "start:prod", "dist/apps/reservations/main.js"]

@@ -19,6 +19,7 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./tsconfig.json
 COPY nest-cli.json ./nest-cli.json
+COPY apps/auth/prisma ./prisma
 
 ###############################################################
 # ติดตั้ง pnpm ทั่วทั้งระบบ (Global) เพื่อให้ใช้ pnpm ได้จาก command line
@@ -44,6 +45,7 @@ COPY libs ./libs
 # (กรณีที่ภายใน /apps/auth มีไฟล์ package.json และ dependencies เพิ่มเติม)
 ###############################################################
 RUN pnpm install
+RUN pnpm prisma generate
 RUN cd apps/auth && pnpm install
 
 ###############################################################
@@ -98,4 +100,4 @@ COPY --from=development /usr/src/app/dist ./dist
 # คำสั่งสุดท้ายที่บอก Docker ให้รัน Node โดยใช้ไฟล์ main.js ภายใต้ 
 # dist/apps/auth/main.js เมื่อ Container เริ่มทำงาน
 ###############################################################
-CMD ["node", "dist/apps/auth/main.js"]
+CMD ["pnpm", "run", "start:prod", "dist/apps/auth/main.js"]

@@ -4,7 +4,8 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CurrentUser, UserDocument } from '@app/common';
+import { CurrentUser } from '@app/common';
+import { User } from '.prisma/client';
 
 @ApiTags('users')
 @Controller('users')
@@ -18,7 +19,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getUser(@CurrentUser() user: UserDocument) {
+  async getUser(@CurrentUser() user: User) {
     return user;
   }
 }

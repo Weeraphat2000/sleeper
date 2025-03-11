@@ -1,5 +1,5 @@
 {
-  "name": "auth",
+  "name": "reservations",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,19 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nestjs/jwt": "^11.0.0",
-    "@nestjs/passport": "^11.0.4",
     "@prisma/client": "^6.4.1",
-    "bcryptjs": "^2.4.3",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0",
     "prisma": "^6.4.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/passport-jwt": "^4.0.1",
-    "@types/passport-local": "^1.0.38",
     "dotenv-cli": "^8.0.0"
   }
 }

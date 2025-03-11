@@ -8,15 +8,14 @@ services:
       dockerfile: ./apps/reservations/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/reservations
       target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
     restart: always # กำหนดให้ container รันอัตโนมัติเมื่อเกิดข้อผิดพลาด
-    command: pnpm run start:dev servervations # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev server)
+    command: sh -c "pnpm prisma migrate deploy --schema apps/reservations/prisma/schema.prisma && pnpm prisma generate --schema apps/reservations/prisma/schema.prisma && pnpm run start:dev reservations" # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev reservations)
     ports:
       - '3000:3000' # แมปพอร์ต 3000 ภายใน container ออกมาที่พอร์ต 3000 บนเครื่องโฮสต์ for run server
-
       # - '9229:9229' # แมปพอร์ต 9229 ภายใน container ออกมาที่พอร์ต 9229 บนเครื่องโฮสต์ for debugging
     volumes:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ reservations
     depends_on:
-      - db # ให้ container reservations ขึ้นหลังจาก db ขึ้นแล้ว
+      - mysql # ให้ container reservations ขึ้นหลังจาก mysql ขึ้นแล้ว
     # environment:
     #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
     env_file:
@@ -28,13 +27,13 @@ services:
       context: . # ระบุ context สำหรับการ build เป็นโฟลเดอร์ปัจจุบัน
       dockerfile: ./apps/auth/Dockerfile # ระบุไฟล์ Dockerfile ที่อยู่ในโฟลเดอร์ apps/auth
       target: development # ระบุให้ใช้ stage "development" จาก multi-stage build ใน Dockerfile
-    command: pnpm run start:dev auth # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev auth)
+    command: sh -c "pnpm prisma migrate deploy --schema apps/auth/prisma/schema.prisma && pnpm prisma generate --schema apps/auth/prisma/schema.prisma && pnpm run start:dev auth" # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev auth)
     ports:
       - '3001:3001' # แมปพอร์ต 3001 ภายใน container ออกมาที่พอร์ต 3001 บนเครื่องโฮสต์
     volumes:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ auth
     depends_on:
-      - db # ให้ container auth ขึ้นหลังจาก db ขึ้นแล้ว
+      - mysql # ให้ container auth ขึ้นหลังจาก mysql ขึ้นแล้ว
     # environment:
     #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
     #   - JWT_SECRET=secret # ตัวแปร environment สำหรับเก็บค่า JWT_SECRET
@@ -51,8 +50,8 @@ services:
     command: pnpm run start:dev payments # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev payments)
     volumes:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ payments
-    depends_on:
-      - db # ให้ container payments ขึ้นหลังจาก db ขึ้นแล้ว
+    # depends_on:
+    #   - db # ให้ container payments ขึ้นหลังจาก db ขึ้นแล้ว
     # environment:
     #   - MONGODB_URI=mongodb://db:27017/sleeper # ตัวแปร environment ชี้ไปยัง service db (ภายใน network ของ docker-compose)
     env_file:
@@ -67,18 +66,30 @@ services:
     command: pnpm run start:dev notifications # คำสั่งที่จะรันแทนค่า CMD ปกติ (เช่น start dev notifications)
     volumes:
       - .:/usr/src/app # แมปโฟลเดอร์ปัจจุบันเข้าไปใน container ที่เก็บโค้ดของ notifications
-    depends_on:
-      - db # ให้ container notifications ขึ้นหลังจาก db ขึ้นแล้ว
+    # depends_on:
+    #   - db # ให้ container notifications ขึ้นหลังจาก db ขึ้นแล้ว
     env_file:
       - ./apps/notifications/.env # ระบุไฟล์ .env ที่อยู่ในโฟลเดอร์ apps/notifications คือ จะดึงค่าในไฟล์ .env(./apps/notifications/.env) มา
 
-  db:
-    # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub
-    image: mongo
+  # db:
+  #   # ส่วนกำหนด service ชื่อ "db" โดยใช้ภาพ (image) MongoDB จาก Docker Hub
+  #   image: mongo
+  #   ports:
+  #     - '27019:27017' # แมปพอร์ต 27017 ภายใน container (MongoDB ปกติ) ออกมาที่พอร์ต 27019 บนเครื่องโฮสต์
+  #   volumes: # กำหนด volume สำหรับเก็บข้อมูลฐานข้อมูล
+  #     - db:/data/db # อ้างอิง volume ชื่อ db ที่กำหนดไว้ใน global
+
+  mysql:
+    # ส่วนกำหนด service ชื่อ "mysql" โดยใช้ภาพ (image) MySQL จาก Docker Hub
+    image: mysql:9.1
     ports:
-      - '27019:27017' # แมปพอร์ต 27017 ภายใน container (MongoDB ปกติ) ออกมาที่พอร์ต 27019 บนเครื่องโฮสต์
-    volumes: # กำหนด volume สำหรับเก็บข้อมูลฐานข้อมูล
-      - db:/data/db # อ้างอิง volume ชื่อ db ที่กำหนดไว้ใน global
+      - '3305:3306' # แมปพอร์ต 3306 ภายใน container (MySQL ปกติ) ออกมาที่พอร์ต 3306 บนเครื่องโฮสต์
+    environment:
+      MYSQL_ROOT_PASSWORD: rootroot # กำหนดรหัสผ่าน root ของ MySQL
+      MYSQL_DATABASE: reservations
+    volumes:
+      - mysql:/var/lib/mysql # อ้างอิง volume ชื่อ mysql ที่กำหนดไว้ใน global
 
 volumes:
-  db: # กำหนด volume ชื่อ db สำหรับใช้งาน
+  # db: # กำหนด volume ชื่อ db สำหรับใช้งาน
+  mysql: # กำหนด volume ชื่อ mysql สำหรับใช้งาน

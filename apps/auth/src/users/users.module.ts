@@ -1,22 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { DatabaseModule } from '@app/common/database';
 import { LoggerModule } from '@app/common/logger/logger.module';
-import { UsersRepository } from './users.repository';
-import { UserDocument, UserSchema } from '@app/common';
+import { PrismaService } from './prisma.service';
 
 @Module({
-  imports: [
-    DatabaseModule,
-    DatabaseModule.forFeature([
-      { name: UserDocument.name, schema: UserSchema },
-    ]),
-    LoggerModule,
-  ],
+  imports: [LoggerModule],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
+  providers: [UsersService, PrismaService],
   // export ให้ UsersService และ UsersRepository ใช้งานได้จากภายนอก
-  exports: [UsersService, UsersRepository],
+  exports: [UsersService],
 })
 export class UsersModule {}

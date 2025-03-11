@@ -1,3 +1,3 @@
 export interface ToekenPayload {
-  userId: string;
+  userId: number;
 }

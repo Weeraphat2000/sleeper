@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { log } from 'console';
 import { ToekenPayload } from './interfaces/token-payload.interface';
-import { UserDocument } from '@app/common';
+import { User } from '.prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -17,11 +17,11 @@ export class AuthService {
     return 'Hello AuthAuthAuthAuth AuthAuthAuthAuth!';
   }
 
-  async login(user: UserDocument, res: Response) {
+  async login(user: User, res: Response) {
     log('AuthService.login', user);
 
     const payload: ToekenPayload = {
-      userId: user._id.toHexString(),
+      userId: user.id,
     };
 
     const expires = new Date();

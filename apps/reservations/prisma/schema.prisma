@@ -1,0 +1,38 @@
+// generator client block:
+// บอก Prisma ว่าจะให้สร้าง Prisma Client (ไลบรารีสำหรับใช้งาน CRUD) อย่างไร
+generator client {
+    // provider = "prisma-client-js"
+    //   ใช้ Prisma Client สำหรับ Node.js/TypeScript
+    provider = "prisma-client-js"
+
+    // output = "../node_modules/.prisma/client"
+    //   บอกให้ Prisma สร้างไฟล์ Client ที่โฟลเดอร์ตาม path นี้
+    output = "../node_modules/.prisma/client"
+
+    // binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+    //   สั่งให้ Prisma เตรียมไบนารีสำหรับ environment ต่าง ๆ:
+    //   - "native": สำหรับระบบปฏิบัติการเดียวกับที่เรียก `prisma generate`
+    //   - "linux-musl-openssl-3.0.x": สำหรับ Linux (Alpine เป็นต้น) ที่ใช้ musl-libc + OpenSSL 3.0
+    binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+// datasource db block:
+// บอกว่า schema ทั้งหมดนี้จะไปผูกกับฐานข้อมูลใด
+datasource db {
+    // provider = "postgresql"
+    //   ใช้งาน PostgreSQL เป็นฐานข้อมูล
+    provider = "mysql"
+
+    // url = env("DATABASE_URL")
+    //   บอกให้ Prisma ไปดึงค่าการเชื่อมต่อฐานข้อมูลจากตัวแปรสภาพแวดล้อม DATABASE_URL
+    url = env("DATABASE_URL")
+}
+
+model Reservation {
+    id        Int      @id @default(autoincrement())
+    timestamp DateTime
+    startDate DateTime
+    endDate   DateTime
+    userId    Int
+    invoiceId String
+}

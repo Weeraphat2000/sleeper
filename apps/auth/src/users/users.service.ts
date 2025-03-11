@@ -1,17 +1,21 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
 import * as bcrypt from 'bcryptjs';
 import { log } from 'console';
 import { GetUserDTO } from './dto/get-user.dto';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async verifyUser(email: string, password: string) {
     log('UsersService.verifyUser', email, password);
-    const user = await this.usersRepository.findOne({ email });
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        email,
+      },
+    });
     if (user && (await bcrypt.compare(password, user.password))) {
       return user;
     }
@@ -20,20 +24,28 @@ export class UsersService {
 
   async create(createUserDTO: CreateUserDTO) {
     await this.validateCreateUserDTO(createUserDTO);
-    return this.usersRepository.create({
-      ...createUserDTO,
-      password: await bcrypt.hash(createUserDTO.password, 10),
+    return this.prismaService.user.create({
+      data: {
+        ...createUserDTO,
+        password: await bcrypt.hash(createUserDTO.password, 10),
+      },
     });
   }
 
   async getUser(getuserDTO: GetUserDTO) {
-    return this.usersRepository.findOne(getuserDTO);
+    return this.prismaService.user.findFirst({
+      where: {
+        id: +getuserDTO.id,
+      },
+    });
   }
 
   private async validateCreateUserDTO(createUserDTO: CreateUserDTO) {
     try {
-      await this.usersRepository.findOne({
-        email: createUserDTO.email,
+      await this.prismaService.user.findFirstOrThrow({
+        where: {
+          email: createUserDTO.email,
+        },
       });
     } catch (e) {
       return null;
